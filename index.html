@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>从画笔到针线——学生美术 × AI 广绣创意展</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    /* ========== 全局与广绣氛围 ========== */
+    :root {
+        --silk-red: #a62e2e;
+        --gold: #c9a769;
+        --ink-black: #2b2b2b;
+        --bg-beige: #f7f3ec;
+        --border-pattern: url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M0 10h20M10 0v20" stroke="%23c9a769" stroke-width="0.5"/></svg>');
+    }
+    * {
+        box-sizing: border-box;
+        margin: 0; padding: 0;
+    }
+    body {
+        font-family: "Microsoft YaHei", sans-serif;
+        background-color: var(--bg-beige);
+        background-image: var(--border-pattern);
+        color: var(--ink-black);
+        line-height: 1.6;
+    }
+    header {
+        text-align: center;
+        padding: 40px 20px 20px;
+        background: linear-gradient(135deg, var(--silk-red), var(--gold));
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+    header::before {
+        content: "";
+        position: absolute;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 60%);
+        animation: rotate 20s linear infinite;
+    }
+    @keyframes rotate {
+        from { transform: rotate(0deg);}
+        to { transform: rotate(360deg);}
+    }
+    header h1 {
+        font-size: 2.8em;
+        letter-spacing: 0.1em;
+        position: relative;
+        z-index: 1;
+    }
+    header p {
+        font-size: 1.2em;
+        margin-top: 10px;
+        position: relative;
+        z-index: 1;
+    }
+
+    nav {
+        display: flex;
+        justify-content: center;
+        background: var(--ink-black);
+        padding: 10px;
+        flex-wrap: wrap;
+    }
+    nav a {
+        color: var(--gold);
+        text-decoration: none;
+        margin: 0 15px;
+        font-weight: bold;
+        transition: color .3s;
+    }
+    nav a:hover {
+        color: #fff;
+    }
+
+    section {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: var(--silk-red);
+        position: relative;
+    }
+    h2::after {
+        content: "";
+        display: block;
+        width: 60px; height: 3px;
+        background: var(--gold);
+        margin: 8px auto 0;
+        border-radius: 2px;
+    }
+
+    /* ========== 作品展示区 ========== */
+    .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+    }
+    .work-card {
+        background: #fff;
+        border: 2px solid var(--gold);
+        border-image: var(--border-pattern) 30 round;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: transform .3s, box-shadow .3s;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.6s forwards;
+    }
+    .work-card:nth-child(2){ animation-delay: .2s; }
+    .work-card:nth-child(3){ animation-delay: .4s; }
+    @keyframes fadeInUp {
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .work-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .images {
+        display: flex;
+        flex-direction: column;
+    }
+    .images img {
+        width: 100%;
+        cursor: pointer;
+        transition: transform .3s;
+    }
+    .images img:hover {
+        transform: scale(1.05);
+    }
+    .info {
+        padding: 12px;
+        font-size: 0.95em;
+        background: #faf9f5;
+    }
+    .info strong {
+        color: var(--silk-red);
+    }
+
+    /* ========== 全屏弹层 ========== */
+    #overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.85);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    #overlay img {
+        max-width: 90%;
+        max-height: 90%;
+        border: 4px solid var(--gold);
+        border-radius: 6px;
+    }
+    #overlay.show {
+        display: flex;
+        animation: fadeIn .3s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0;}
+        to { opacity: 1;}
+    }
+
+    footer {
+        text-align: center;
+        padding: 20px;
+        background: var(--ink-black);
+        color: var(--gold);
+        font-size: 0.9em;
+        margin-top: 40px;
+    }
+
+    /* ========== 响应式 ========== */
+    @media(max-width: 600px){
+        header h1 { font-size: 2em; }
+        nav a { margin: 5px 10px; font-size: 0.9em; }
+        .gallery { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>从画笔到针线</h1>
+    <p>学生美术作品 × AI 广绣创意展</p>
+</header>
+
+<nav>
+    <a href="#gallery">作品展示</a>
+    <a href="#story">创作故事</a>
+    <a href="#tech">技术探秘</a>
+    <a href="#about">关于我们</a>
+</nav>
+
+<section id="gallery">
+    <h2>作品展示</h2>
+    <div class="gallery">
+        <!-- 示例卡片 1 -->
+        <div class="work-card">
+            <div class="images">
+                <img src="https://via.placeholder.com/600x400/a62e2e/ffffff?text=学生原画1" alt="学生原画1" onclick="openOverlay(this.src)">
+                <img src="https://via.placeholder.com/600x400/c9a769/000000?text=AI刺绣1" alt="AI刺绣1" onclick="openOverlay(this.src)">
+            </div>
+            <div class="info">
+                <strong>作者：</strong>小明（初二）<br>
+                <strong>灵感：</strong>岭南春日的花窗与鸟鸣<br>
+                <strong>主题：</strong>自然风光
+            </div>
+        </div>
+        <!-- 示例卡片 2 -->
+        <div class="work-card">
+            <div class="images">
+                <img src="https://via.placeholder.com/600x400/2b2b2b/f7f3ec?text=学生原画2" alt="学生原画2" onclick="openOverlay(this.src)">
+                <img src="https://via.placeholder.com/600x400/a62e2e/f7f3ec?text=AI刺绣2" alt="AI刺绣2" onclick="openOverlay(this.src)">
+            </div>
+            <div class="info">
+                <strong>作者：</strong>小红（高一）<br>
+                <strong>灵感：</strong>校园的清晨操场<br>
+                <strong>主题：</strong>校园生活
+            </div>
+        </div>
+        <!-- 可继续添加更多卡片 -->
+    </div>
+</section>
+
+<!-- 占位其他区域 -->
+<section id="story"><h2>创作故事</h2><p style="text-align:center;">这里将呈现学生创作历程与师生协作故事…</p></section>
+<section id="tech"><h2>技术探秘</h2><p style="text-align:center;">这里将科普 AI 在广绣转化中的应用原理…</p></section>
+<section id="about"><h2>关于我们</h2><p style="text-align:center;">介绍项目背景、团队与宗旨…</p></section>
+
+<!-- 全屏弹层 -->
+<div id="overlay" onclick="closeOverlay()">
+    <img src="" alt="全屏展示">
+</div>
+
+<footer>
+    © 2026 从画笔到针线创意展 | 融合传统广绣与人工智能的艺术探索
+</footer>
+
+<script>
+    function openOverlay(src) {
+        const overlay = document.getElementById('overlay');
+        overlay.classList.add('show');
+        overlay.querySelector('img').src = src;
+    }
+    function closeOverlay() {
+        const overlay = document.getElementById('overlay');
+        overlay.classList.remove('show');
+    }
+</script>
+
+</body>
+</html>
